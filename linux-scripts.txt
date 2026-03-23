@@ -1,0 +1,37 @@
+# Mit Ubuntu 22.04.5 - ZM installation
+# Here is the token for bot Hs10backup @Hs10backup_bot:
+# <credential removed>
+# Here is the token for bot hs010 @hs010_bot:
+# ---------------------
+#!/bin/bash
+# 1. Define your Telegram credentials
+BOT_TOKEN=""
+CHAT_ID=""
+SYSID=""
+
+# Wait for a moment to ensure networking is fully settled (optional but safe)
+sleep 10
+
+# 2. Capture the uptime command output into a variable
+# 'uptime -p' gives a pretty, short output. Use 'uptime' for full system load info.
+SYSTEM_UPTIME=$(uptime)
+
+# 3. Construct the message with a prefix (optional)
+MESSAGE="Uptime: $SYSTEM_UPTIME"
+
+# Get the first internal IP address found
+# 'hostname -I' gets all IPs; 'awk' grabs the first one
+INTERNAL_IP=$(hostname -I | awk '{print $1}')
+
+# Log the date and IP to a file
+# echo "$(date): Internal IP is $INTERNAL_IP" >> /var/log/startup_ip.log
+
+# 4. Send the request using curl
+# We use --data-urlencode for the text to automatically handle spaces and special characters.
+curl -s -X POST "https://api.telegram.org/bot$BOT_TOKEN/sendMessage" \
+-d chat_id="$CHAT_ID" \
+--data-urlencode "text=System $SYSID on IP $INTERNAL_IP up $SYSTEM_UPTIME *END*"
+exit
+
+chmod 777 send_tg_uptime.sh
+chmod +x send_tg_uptime.sh
